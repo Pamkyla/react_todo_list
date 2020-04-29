@@ -1,27 +1,23 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 //название компонента пишем с большой буквы. Компонентa должна возвращать JSX
-const AppHeader = () => {
-  return <h1>Todo List</h1>;
-}
+ // Aтрибуты называются верблюдом
+  // Атрибут class = className
+  // Атрибут for = htmlFor
 
-const SearchBlock = ()=> {
-  return <input placeholder='search'/>;
-}
-const TodoList = () => {
-  return (<ul>
-      <li>Learn JS</li>
-      <li>Learn React</li>
-    </ul>)
-}
+import AppHeader from './components/AppHeader';
+import SearchBlock from './components/SearchBlock';
+import TodoList from './components/TodoList';
 
-const el = (
+const App = () => {
+  return (
   <div>
     <AppHeader/>
     <SearchBlock/>
     <TodoList/>
   </div>
+  );
+}
 
-);
 
-ReactDOM.render(el, document.getElementById('root'));
+ReactDOM.render(<App />, document.getElementById('root'));
