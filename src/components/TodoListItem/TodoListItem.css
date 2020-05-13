@@ -3,15 +3,20 @@
     align-items: center;
 }
 
-.btn-important {
-    margin-left: auto;
-    margin-right: 0.4rem;
-}
-
 .todo-list-label {
     cursor: pointer;
 }
 
-.todo-list-label.done {
+.todo-list-item.important .todo-list-label {
+    font-weight: bold;
+    color: #28a745;
+}
+
+.todo-list-item.done .todo-list-label {
     text-decoration: line-through;
+}
+
+.btn-important {
+    margin-left: auto;
+    margin-right: 0.4rem;
 }
