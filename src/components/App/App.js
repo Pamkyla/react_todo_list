@@ -7,6 +7,7 @@ import SearchBlock from '../SearchBlock';
 import TodoList from '../TodoList';
 import ItemAddForm from '../ItemAddForm';
 
+
 class App extends React.Component {
 
 ids = 10;
@@ -16,11 +17,12 @@ state = {
     { label: 'Learn HTML', important: false, done: false, id: 1, },
     { label: 'Learn JS', important: false, done: false, id: 2, },
     { label: 'Learn React', important: false, done: false, id: 3, },
-  ]
+  ],
+  detectedText:'',
 };
 
 deleteItem = (id) => {
-  this.setState(({ prevState }) => {
+  this.setState(( prevState ) => {
     const index = prevState.todoData.findIndex((elem) => elem.id === id);
     
     const newTodoData = [
@@ -52,43 +54,60 @@ addItem = (text) => {
   });
 }
 
-toggleDone = (id) => {
-  this.setState(( {todoData} ) => {
-    const index = todoData.findIndex((elem) => elem.id === id);
+toggleProp = (id, arr, prop) => {
+  const index = arr.findIndex((elem) => elem.id === id);
 
-    const oldObj = todoData[index];
-    const newObj = {...oldObj, done: !oldObj.done};
+  const oldObj = arr[index];
+  const newObj = {...oldObj, [prop]: !oldObj[prop]};
 
-    const newArr = [
-      ...todoData.slice(0, index),
-      ...todoData.slice(index + 1)
-    ];
-  
-    return {
-      todoData: newArr
-    }
-  });
-
-  
+  return [
+    ...arr.slice(0, index),
+    newObj,
+    ...arr.slice(index + 1)
+  ];
 }
 
-toggleImportant = () => {
+toggleDone = (id) => {
+  this.setState(( {todoData} ) => {
+    return {
+      todoData: this.toggleProp(id, todoData, 'done')
+    };
+  });
+}
 
+toggleImportant = (id) => {
+  this.setState(( {todoData} ) => {
+    return{
+      todoData: this.toggleProp(id, todoData, 'important')
+    }
+  });
+}
+
+search= (arr, detectedText) => {
+  if (detectedText.length === 0) {
+    return arr;
+  }
+  return arr.filter((el) => {
+    return el.label.indexOf(detectedText) > -1;
+  });
 }
 
   render() {
 
-    const done = this.state.todoData.filter((el) => el.done).length;
+    const { todoData, detectedText } = this.state;
+    const detectedItems = this.search(todoData, detectedText);
+    const done = todoData.filter((el) => el.done).length;
+    const toDo = todoData.length - done;
 
     return (
       <div className="App">
         <AppHeader 
-        toDo={3} 
+        toDo={toDo} 
         done={done} 
         />
         <SearchBlock/>
         <TodoList 
-        todoItems = {this.state.todoData} 
+        todoItems = {detectedItems} 
         onDelete={ this.deleteItem } 
         onToggleImportant = { this.toggleImportant }
         onToggleDone = { this.toggleDone }
