@@ -1,73 +1,42 @@
 import React from 'react';
 
 import './TodoListItem.css';
+import Chrat from '../Chart';
 
-class TodoListItem extends React.Component{
 
-    
+class TodoListItem extends React.Component {
+
     render() {
-        const { label, onDelete, done, important, onToggleImportant, onToggleDone } = this.props;
-        
-
+        const { name, html_url, important, onToggleImportant, language } = this.props;
         let classNames = 'todo-list-item';
 
-         if(done) {
-            classNames += ' done';
-        }
-
-        if(important) {
+        if (important) {
             classNames += ' important'
-        } 
-    
-        return(
+        }
+        return (
             <div className={classNames}>
-                <span
+                <p
                     className="todo-list-label"
-                    onClick={ onToggleDone }
                 >
-                    { label }
-                </span>
-                <button 
-                className="btn btn-outline-success btn-important"
-                onClick={ onToggleImportant }
+                    <a href={html_url}>{name}</a>
+                    <span>{language}</span>
+                </p>
+                <div className='todo-list-label'>
+                <button
+                    className="btn btn-outline-success btn-important"
+                    onClick={onToggleImportant}
                 >
-                    <i className="fa fa-star" aria-hidden="true"></i>
+                   <i className="fa fa-star"></i>
+                   Star
                 </button>
-                <button 
-                    className="btn btn-outline-danger"
-                    onClick={ onDelete }
-                >
-                    <i className="fa fa-trash" aria-hidden="true"></i>
-                </button>
+
+                <Chrat name={name}/>
+                </div>
+                
             </div>
-            
+
         );
     }
 }
-
-/* const TodoListItem = ( {label, important} ) => {
-
-    const style = {
-        color:important ? 'tomato' : 'black',
-    };
-
-    return(
-        <div className="todo-list-item">
-            <span
-                className="todo-list-label"
-                style={style}
-            >
-                { label }
-            </span>
-            <button className="btn btn-outline-success btn-important">
-                <i className="fa fa-star" aria-hidden="true"></i>
-            </button>
-            <button className="btn btn-outline-danger">
-                <i className="fa fa-trash" aria-hidden="true"></i>
-            </button>
-        </div>
-        
-    );
-} */
 
 export default TodoListItem;

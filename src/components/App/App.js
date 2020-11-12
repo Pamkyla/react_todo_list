@@ -5,157 +5,122 @@ import './App.css';
 import AppHeader from '../AppHeader';
 import SearchBlock from '../SearchBlock';
 import TodoList from '../TodoList';
-import ItemAddForm from '../ItemAddForm';
 import ItemStatusFilter from '../ItemStatusFilter';
-
 
 class App extends React.Component {
 
-ids = 10;
+  ids = 10;
 
-state = {
-  todoData: [
-    { label: 'Learn HTML', important: false, done: false, id: 1, },
-    { label: 'Learn JS', important: false, done: false, id: 2, },
-    { label: 'Learn React', important: false, done: false, id: 3, },
-  ],
-  detectedText:'',
-  filter: 'all', //all, active, done
-};
+  state = {
+    todoData: [],
+    detectedText: '',
+    filter: 'all'
+  };
 
-deleteItem = (id) => {
-  this.setState(( prevState ) => {
-    const index = prevState.todoData.findIndex((elem) => elem.id === id);
-    
-    const newTodoData = [
-      ...prevState.todoData.slice(0, index),
-      ...prevState.todoData.slice(index + 1)
+  componentDidMount() {
+    const URL = "https://api.github.com/users/Pamkyla/repos";
+    fetch(URL).then(res => res.json()).then(json => {
+      this.setState({ todoData: json });
+      
+    });
+  }
+
+  toggleProp = (id, arr, prop) => {
+    const index = arr.findIndex((elem) => elem.id === id);
+
+    const oldObj = arr[index];
+    const newObj = { ...oldObj, [prop]: !oldObj[prop] };
+
+    return [
+      ...arr.slice(0, index),
+      newObj,
+      ...arr.slice(index + 1)
     ];
-
-    return{
-      todoData: newTodoData 
-    }
-  });
-}
-
-addItem = (text) => {
-  
-  const item = {
-    label: text,
-    important: false,
-    id: this.ids++
   }
 
-  this.setState(({ todoData }) => {
-    const newArr = [...todoData, item];
-
-
-    return {
-      todoData: newArr
-    }
-  });
-}
-
-toggleProp = (id, arr, prop) => {
-  const index = arr.findIndex((elem) => elem.id === id);
-
-  const oldObj = arr[index];
-  const newObj = {...oldObj, [prop]: !oldObj[prop]};
-
-  return [
-    ...arr.slice(0, index),
-    newObj,
-    ...arr.slice(index + 1)
-  ];
-}
-
-toggleDone = (id) => {
-  this.setState(( {todoData} ) => {
-    return {
-      todoData: this.toggleProp(id, todoData, 'done')
-    };
-  });
-}
-
-toggleImportant = (id) => {
-  this.setState(( {todoData} ) => {
-    return{
-      todoData: this.toggleProp(id, todoData, 'important')
-    }
-  });
-}
-
-onSearchChange = (detectedText) => {
-  this.setState({ detectedText });
-}
-
-search = (arr, detectedText) => {
-  if (detectedText.length === 0) {
-    return arr;
+  toggleImportant = (id) => {
+    this.setState(({ todoData }) => {
+      return {
+        todoData: this.toggleProp(id, todoData, 'important')
+      }
+    });
   }
-  return arr.filter((el) => {
-    return el.label.toUpperCase()
-    .indexOf(detectedText.toUpperCase()) > -1;
-  });
-}
 
-itemsFilter = (arr, filterText) => {
-  switch (filterText) {
-    case 'all':
+  onSearchChange = (detectedText) => {
+    this.setState({ detectedText });
+  }
+
+  search = (arr, detectedText) => {
+    if (detectedText.length === 0) {
       return arr;
-    case 'active':
-      return arr.filter((el) => !el.done);
-    case 'done':
-      return arr.filter((el) => el.done);
-    default:
-      return arr;
+    }
+    return arr.filter((el) => {
+      return el.name.toUpperCase()
+        .indexOf(detectedText.toUpperCase()) > -1;
+    });
   }
-}
 
-onItemsFilterChange = (filter) => {
-  this.setState({filter});
-}
+  itemsFilter = (arr, filterText) => {
+    switch (filterText) {
+      case 'all':
+        return arr;
+      case 'HTML':
+        return arr.filter((el) => el.language === 'HTML');
+      case 'CSS':
+        return arr.filter((el) => el.language === 'CSS');
+      case 'JS':
+        return arr.filter((el) => el.language === 'JavaScript');
+      case 'public':
+        return arr.filter((el) => !el.private);
+      case 'private':
+        return arr.filter((el) => el.private);
+        case 'sources':
+        return arr.filter((el) => !el.private);
+        case 'forks':
+        return arr.filter((el) => el.forks);
+        case 'archived':
+        return arr.filter((el) => el.archived);
+      case 'mirrors':
+        return arr.filter((el) => el.mirrors);
+      default:
+        return arr;
+    }
+  }
+
+  onItemsFilterChange = (filter) => {
+    this.setState({ filter });
+  }
 
   render() {
-
     const { todoData, detectedText, filter } = this.state;
     const detectedItems = this.itemsFilter(this.search(todoData, detectedText), filter);
-    const done = todoData.filter((el) => el.done).length;
-    const toDo = todoData.length - done;
 
     return (
       <div className="App">
-        <AppHeader 
-          toDo={toDo} 
-          done={done} 
+        <AppHeader
         />
         <div className="searchPanel d-flex">
-        <SearchBlock
-          onSearchChange={this.onSearchChange}
-        />
-        <ItemStatusFilter 
-          filter={filter}
-          onItemsFilterChange={this.onItemsFilterChange}
-        />
+          <SearchBlock
+            onSearchChange={this.onSearchChange}
+          />
+          <ItemStatusFilter
+            filter={filter}
+            onItemsFilterChange={this.onItemsFilterChange}
+          />
         </div>
-        <TodoList 
-          todoItems = {detectedItems} 
-          onDelete={ this.deleteItem } 
-          onToggleImportant = { this.toggleImportant }
-          onToggleDone = { this.toggleDone }
-        />
-        <ItemAddForm 
-          onItemAdd={ this.addItem }
+        <TodoList
+          todoItems={detectedItems}
+          onToggleImportant={this.toggleImportant}
         />
       </div>
-      );
+    );
   }
 }
 
 
 
- 
-  
+
+
 
 
 export default App;

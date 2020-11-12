@@ -5,6 +5,13 @@
 
 .todo-list-label {
     cursor: pointer;
+    display: flex;
+    flex-direction: column;
+}
+
+.todo-list-label:last-child{
+    margin-left: auto;
+    align-items: flex-end;
 }
 
 .todo-list-item.important .todo-list-label {
@@ -17,6 +24,12 @@
 }
 
 .btn-important {
-    margin-left: auto;
-    margin-right: 0.4rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    font-size: 12px;
+}
+
+.fa-star {
+    margin-right: 5px;
 }
